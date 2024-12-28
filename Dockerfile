@@ -15,7 +15,6 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 WORKDIR /code
 
-
 COPY --from=builder /usr/local/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages
 COPY . .
 
