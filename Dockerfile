@@ -1,17 +1,20 @@
-FROM python:3.9-alpine
+FROM python:3.10-alpine
 
 RUN apk add --no-cache gcc musl-dev libpq-dev
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
 WORKDIR /code
 
-COPY requirements.txt /code/
+# Копируем все файлы в контейнер
+COPY . .
+
+
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . /code/
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED=1
+
+# Команда для запуска приложения
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

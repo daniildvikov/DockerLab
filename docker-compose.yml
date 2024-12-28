@@ -4,13 +4,10 @@ services:
       context: .
     image: dockerlearn
     container_name: web
-    command: >
-      sh -c "python manage.py migrate &&
-             python manage.py runserver 0.0.0.0:8000"
-    volumes:
-      - .:/code
     ports:
       - 8000:8000
+    volumes:
+      - .:/code
     environment:
       POSTGRES_DB: mydatabase
       POSTGRES_USER: myuser
@@ -19,6 +16,9 @@ services:
       POSTGRES_PORT: 5432
     depends_on:
       - db
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
 
   db:
     image: postgres:14-alpine
@@ -33,3 +33,4 @@ services:
 
 volumes:
   postgres_data:
+
