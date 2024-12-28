@@ -1,20 +1,29 @@
-FROM python:3.10-alpine
+FROM python:3.10-alpine AS builder
 
 RUN apk add --no-cache gcc musl-dev libpq-dev
 
+WORKDIR /code
+
+COPY requirements.txt /code/
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+#Легковесный контейнер с приложением
+FROM python:3.10-alpine
+
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-USER appuser
 
 WORKDIR /code
 
-# Копируем все файлы в контейнер
+
+COPY --from=builder /usr/local/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages
 COPY . .
-
-
-RUN pip install --no-cache-dir -r requirements.txt
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED=1
 
+USER appuser
+
 # Команда для запуска приложения
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
